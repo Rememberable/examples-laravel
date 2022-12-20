@@ -695,3 +695,83 @@ public function index()
     return view('devices', ['devices' => $devices]);
 }
 ```
+
+## Full Text Searching With Rankings
+```php
+<?php
+// migrations
+Schema::create('users', function (Blueprint $table) {
+    $table->id();
+    $table->string('name');
+    $table->string('email')->unique();
+    $table->timestamp('email_verified_at')->nullable();
+    $table->string('password');
+    $table->rememberToken();
+    $table->timestamps();
+});
+Schema::create('posts', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('author_id')->constrained('users');
+    $table->string('title');
+    $table->string('slug');
+    $table->longText('body');
+    $table->dateTime('published_at');
+    $table->timestamps();
+});
+
+if (config('database.default') === 'mysql') {
+    DB::statement('CREATE FULLTEXT INDEX posts_fulltext_index ON posts(title, body) WITH PARSER ngram');
+}
+
+if (config('database.default') === 'sqlite') {
+    throw new \Exception('This lesson does not support SQLite.');
+}
+
+if (config('database.default') === 'pgsql') {
+    DB::statement('ALTER TABLE posts ADD COLUMN searchable TSVECTOR');
+    DB::statement('CREATE INDEX posts_searchable_gin ON posts USING GIN(searchable)');
+    DB::statement("CREATE TRIGGER posts_searchable_update BEFORE INSERT OR UPDATE ON posts FOR EACH ROW EXECUTE PROCEDURE tsvector_update_trigger('searchable', 'pg_catalog.english', 'title', 'body')");
+}
+// User model
+public function posts()
+{
+    return $this->hasMany(Post::class, 'author_id');
+}
+// Post model
+protected $casts = [
+    'published_at' => 'datetime',
+];
+
+public function author()
+{
+    return $this->belongsTo(User::class, 'author_id');
+}
+// controller
+public function index()
+{
+    $posts = Post::query()
+        ->with('author')
+        ->when(request('search'), function ($query, $search) {
+            if (config('database.default') === 'mysql') {
+                $query->whereRaw('match(title, body) against(? in boolean mode)', [$search])
+                    ->selectRaw('*, match(title, body) against(? in boolean mode) as score', [$search]);
+            }
+
+            if (config('database.default') === 'sqlite') {
+                throw new \Exception('This lesson does not support SQLite.');
+            }
+
+            if (config('database.default') === 'pgsql') {
+                $search = implode(' | ', array_filter(explode(' ', $search)));
+                $query->selectRaw("*, ts_rank(searchable, to_tsquery('english', ?)) as score", [$search])
+                    ->whereRaw("searchable @@ to_tsquery('english', ?)", [$search])
+                    ->orderByRaw("ts_rank(searchable, to_tsquery('english', ?)) desc", [$search]);
+            }
+        }, function ($query) {
+            $query->latest('published_at');
+        })
+        ->paginate();
+
+    return view('posts', ['posts' => $posts]);
+}
+```
