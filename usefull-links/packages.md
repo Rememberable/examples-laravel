@@ -41,3 +41,9 @@ php artisan ui react --auth
 ```
 composer require chartello/chartello
 ```
+
+### Simple way to ban any Model by ID and by IP.
+* Official site [here](https://github.com/mchev/banhammer)
+```
+composer require mchev/banhammer
+```
