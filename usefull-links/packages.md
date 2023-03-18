@@ -47,3 +47,13 @@ composer require chartello/chartello
 ```
 composer require mchev/banhammer
 ```
+
+### PHP Insights - The perfect starting point to analyze the code quality of your PHP projects 
+* Official site [here](https://phpinsights.com)
+```
+# First, install:
+composer require nunomaduro/phpinsights --dev
+
+# Then, use it:
+./vendor/bin/phpinsights
+```
