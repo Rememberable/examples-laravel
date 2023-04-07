@@ -43,11 +43,6 @@ trait Favoritable
     }
 
     public function scopeFavoritedBy($query, User $user)
-
-class Favorite extends Model
-{
-    protected $fillable = ['user_id'];
-}
     {
         return $query->whereHas('favorites', function ($query) use ($user) {
             $query->where('user_id', $user->id);
