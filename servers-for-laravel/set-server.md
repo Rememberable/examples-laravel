@@ -72,7 +72,7 @@ composer install
 sudo chown www-data:www-data /var/www
 ```
 
-### Configuring Nginx
+## Configuring Nginx
 
 ```shell
 cd /etc/nginx/sites-available
@@ -114,7 +114,7 @@ sudo ln -s /etc/nginx/sites-available/laracast /etc/nginx/sites-enabled/
 sudo service nginx reload
 ```
 
-### Install and Secure MySQL 8
+## Install and Secure MySQL 8
 
 ```shell
 sudo apt install mysql-server -y
@@ -124,7 +124,7 @@ sudo apt install mysql-server -y
 sudo mysql
 ```
 
-```
+```mysql
 ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY '12345678';
 ```
 
@@ -136,22 +136,76 @@ sudo mysql_secure_installation
 mysql -u root -p
 ```
 
-```
+```mysql
 CREATE DATABASE laracasts CHARACTER SET utf8 COLLATE utf8_unicode_ci;
 ```
 
-```
+```mysql
 CREATE USER 'laracasts'@'localhost' IDENTIFIED BY '12345678';
 ```
 
-```
+```mysql
 GRANT ALL PRIVILEGES ON laracasts.* TO 'laracasts'@'localhost';
 ```
 
-```
+```mysql
 FLUSH PRIVILEGES;
 ```
 
 ```shell
 sudo apt install php8.2-mysql
+```
+
+## Installing Redis and Running Workers
+
+```shell
+sudo apt install redis-server -y
+```
+
+```shell
+sudo apt install php8.2-redis
+```
+
+```shell
+sudo apt install supervisor
+```
+
+```shell
+cd /etc/supervisor/conf.d
+sudo nano laracasts-workers.conf
+```
+
+```text
+[program:laracasts-workers]
+process_name=%(program_name)s_%(process_num)02d
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+redirect_stderr=true
+stopwaitsecs=3600
+command=php8.2 /home/laracasts/www/artisan queue:work
+user=laracasts
+stdout_logfile=/home/laracasts/www/storage/logs/workers.log
+numprocs=3
+```
+
+```shell
+touch /home/laracasts/www/storage/logs/workers.log
+```
+
+```shell
+sudo chown laracasts:laracasts /home/laracasts/www/storage/logs/workers.log
+```
+
+```shell
+sudo supervisorctl reread
+```
+
+```shell
+sudo supervisorctl update
+```
+
+```shell
+sudo supervisorctl status laracasts-worker:*
 ```
