@@ -209,3 +209,99 @@ sudo supervisorctl update
 ```shell
 sudo supervisorctl status laracasts-worker:*
 ```
+
+## Configuring Domain Names
+
+```shell
+vim /etc/nginx/sites-available/laracast
+```
+
+## Installing TLS Certificates with Let's Encrypt
+
+```shell
+sudo snap install --classic certbot
+```
+
+Make sure to create a backup settings
+
+```shell
+sudo cp /etc/nginx/sites-available/laracast /etc/nginx/sites-enabled/laracast-backup
+```
+
+```shell
+sudo certbot --nginx
+```
+
+Fill:
+
+```text
+Email: maks.klen.99@gmail.com
+Terms of service: Y
+Would you be willing ...: Y
+Which names would you like ...: 1,2
+```
+
+## Automatic Deployments
+
+```shell
+ssh-keygen -t rsa -C "github" -f $PWD/storage/key
+```
+
+```shell
+cat $PWD/storage/key.pub
+```
+
+Past public key to `~/.ssh/authorized_keys`
+
+```shell
+vim ~/.ssh/authorized_keys
+```
+
+```shell
+chmod 600 ~/.ssh/authorized_keys
+```
+
+Now to connect via keys use:
+
+```shell
+ssh -i key laracasts@54.160.249.168
+```
+
+```shell
+mkdir .github
+mkdir .github/workflows
+vim .github/workflows/deploy.yml
+```
+
+Paste to `deploy.yml`:
+
+```yaml
+name: deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: Deploy to AWS
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Deploy
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: 54.160.249.168
+          port: 22
+          username: laracasts
+          keys: ${{secrets.PRIVATE_KEY}}
+          script: "cd www; git pull origin main"
+```
+
+```shell
+cat $PWD/storage/key
+```
+
+Go to `github` -> `settings` -> `secrets and variables` -> `actions` -> `new repository secret`
+
+Go to `actions` -> `deploy` -> `run workflow`
+
+## Configuring OPCache
