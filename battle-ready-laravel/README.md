@@ -105,3 +105,23 @@ in new or changed code.
 ```shell
 ./vendor/bin/phpstan analyse --generate-baseline
 ```
+
+### Style CI
+
+[Documentation](https://styleci.io/)
+
+### Code Coverage
+
+Running the tests and seeing the code coverage can also be useful for when you come to deciding on your testing 
+strategy later. For example, it can help you determine which parts of the project should be prioritised for writing 
+tests.
+
+Generating the Code Coverage Report
+```shell
+php artisan test --coverage
+```
+
+if we want to specify that the application must have at least 70% code coverage, you could run the following command
+```shell
+php artisan test --coverage --min=70
+```
