@@ -73,3 +73,35 @@ Run Enlightn
 ```shell
 php artisan enlightn
 ```
+
+### Larastan
+
+Larastan is a package built on top of PHPStan (a static analysis tool) that can be used to perform code analysis.
+
+Installation
+```shell
+composer require nunomaduro/larastan --dev
+```
+
+Create a `phpstan.neon` file in your Laravel project's root.
+```shell
+touch phpstan.neon
+```
+
+Run Larastan
+```shell
+./vendor/bin/phpstan analyse
+```
+
+False Positives. You could either add `// @phpstan-ignore-next-line` above the method call like so:
+```php
+// @phpstan-ignore-next-line
+app(NewsletterService::class)->generateStatsForAdmin(auth('admin')
+->user());
+```
+
+Larastan provides the ability to set a "baseline", which effectively ignores the existing code and only detects issues 
+in new or changed code.
+```shell
+./vendor/bin/phpstan analyse --generate-baseline
+```
