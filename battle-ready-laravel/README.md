@@ -54,3 +54,22 @@ Automatically Fixing Issues
 ```shell
 php artisan insights --fix
 ```
+
+### Enlightn
+
+[Documentation](https://www.laravel-enlightn.com/)
+
+Installation
+```shell
+composer require enlightn/enlightn
+```
+
+Publish the package's config file
+```shell
+php artisan vendor:publish --tag=enlightn
+```
+
+Run Enlightn
+```shell
+php artisan enlightn
+```
