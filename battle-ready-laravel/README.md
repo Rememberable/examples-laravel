@@ -125,3 +125,5 @@ if we want to specify that the application must have at least 70% code coverage,
 ```shell
 php artisan test --coverage --min=70
 ```
+
+## Planning Your Auditing Strategy
