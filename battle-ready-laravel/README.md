@@ -126,4 +126,50 @@ if we want to specify that the application must have at least 70% code coverage,
 php artisan test --coverage --min=70
 ```
 
-## Planning Your Auditing Strategy
+## Manual Auditing
+
+
+# Custom
+
+## Sail
+
+Laravel Sail is a light-weight command-line interface for interacting with Laravel's default Docker development 
+environment.
+
+[Documentation](https://laravel.com/docs/sail)
+
+Installation
+```shell
+composer require laravel/sail --dev
+```
+
+Start Sail
+```shell
+./vendor/bin/sail up
+```
+
+## Pint
+
+Laravel Pint is an opinionated PHP code style fixer for minimalists.
+
+[Documentation](https://laravel.com/docs/pint)
+
+Installation
+```shell
+composer require laravel/pint --dev
+```
+
+Start to fix code style
+```shell
+./vendor/bin/pint
+```
+
+Start to inspect your code for style errors without actually changing the files
+```shell
+./vendor/bin/pint --test
+```
+
+If you would like Pint to only modify the files that have uncommitted changes
+```shell
+./vendor/bin/pint --dirty
+```
