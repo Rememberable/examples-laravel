@@ -128,6 +128,182 @@ php artisan test --coverage --min=70
 
 ## Manual Auditing
 
+Pinning the blame on someone won't benefit anyone, so remember to keep an open mind and be open to conversation.
+
+### Investigating "raw" Database Queries
+
+The project that I was auditing was a multi-tenant application and provided a search functionality for users using code 
+similar to this:
+```php
+User::where('tenant_id', auth()->user()->tenant_id)
+    ->whereRaw(
+        "CONCAT(first_name, ' ', last_name) LIKE '%"
+        .$request->input('search')."%'"
+    )
+    ->get();
+```
+
+```sql
+SELECT * FROM `users` WHERE tenant_id = 1 AND CONCAT(first_name, ' ', last_name) LIKE '%Joe B%'
+```
+
+```text
+/users?search='OR 1=1;-- --
+```
+
+```sql
+SELECT * FROM `users` WHERE tenant_id = 1 AND CONCAT(first_name, ' ', last_name) LIKE '%' OR 1=1;-- --'%'
+```
+
+```php
+User::where('tenant_id', auth()->user()->tenant_id)
+    ->whereRaw(
+        'CONCAT(first_name, " ", last_name) LIKE ?',
+        ['%'.$request->input('email').'%']
+    )
+    ->get();
+```
+
+Doing this makes it much easier to track down any usages of raw queries (such as in `whereRaw`, `orWhereRaw`, 
+`selectRaw`, etc.)
+
+### Finding Incorrect Authorisation
+
+A potentially harmful security issue that I have found in many projects that I have audited is incomplete 
+(or incorrect) authorisation checks.
+
+#### Missing Server-Side Authorisation
+
+```php
+@if(auth()->user()->hasPermissionTo('view-users'))
+    <a href="{{ route('users.show', $user) }}">
+        View {{ $user->name }}
+    </a>
+@endif
+```
+
+```php
+public function show(User $user): View
+{
+    return view('users.show', [
+        'user' => $user,
+    ]);
+}
+```
+
+```php
+public function show(User $user): View
+{
+    if (!$user->hasPermissionTo('view-users')) {
+        abort(403);
+    }
+
+    return view('users.show', [
+        'user' => $user,
+    ]);
+}
+```
+
+```php
+class UserPolicy
+{
+    public function view(User $authUser, User $user): bool
+    {
+        return $authUser->hasPermissionTo('view-users');
+    }
+}
+```
+```php
+@if(auth()->user()->can('view', $user))
+    <a href="{{ route('users.show', $user) }}">
+        View {{ $user->name }}
+    </a>
+@endif
+```
+
+```php
+public function show(User $user): View
+{
+    $this->authorize('view', $user);
+
+    return view('users.show', [
+        'user' => $user,
+    ]);
+}
+```
+
+
+#### Not Checking the Tenant/Team/Owner
+
+```php
+class PostPolicy
+{
+    public function publish(User $user, Post $post): bool
+    {
+        return $user->hasPermissionTo('publish-post');
+    }
+}
+```
+
+```php
+class PostPolicy
+{
+    public function publish(User $user, Post $post): bool
+    {
+        return $user->hasPermissionTo('publish-post') && $user->team_id === $post->team_id;
+    }
+}
+```
+
+#### Not Scoping the Relationships
+
+```php
+Route::get(
+    '/projects/{project}/invoices/{invoice}',
+    [InvoiceController::class, 'show']
+);
+```
+
+```php
+public function show(Project $project, Invoice $invoice): View
+{
+    if ($project->user_id !== auth()->user()->id) {
+        abort(403);
+    }
+
+    return view('invoices.show', [
+        'invoice' => $invoice,
+    ]);
+}
+```
+
+```php
+public function show(Project $project, Invoice $invoice): View
+{
+    if ($project->user_id !== auth()->user()->id) {
+        abort(403);
+    }
+    
+    if ($project->user_id !== auth()->user()->id) {
+        abort(403);
+    }
+    
+    return view('invoices.show', [
+        'invoice' => $invoice,
+    ]);
+}
+```
+
+```php
+Route::get(
+    '/projects/{project}/invoices/{invoice}',
+    [InvoiceController::class, 'show']
+)->scopeBindings();
+// This removes the need for the `$invoice->project_id !== $project->id` check in the controller method.
+```
+
+
+
 
 # Custom
 
