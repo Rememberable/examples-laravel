@@ -120,6 +120,24 @@ REQUIRED|DATATYPE|MIN|MAX|OTHERS
 
 #### How to Disable N+1 Queries
 
+```php
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        Model::preventLazyLoading();
+    }
+}
+```
+
+```php
+Model::preventLazyLoading(! app()->isProduction());
+```
+
 ### Finding Controllers That Use Other Controllers
 
 ### Finding Hard-Coded Credentials
