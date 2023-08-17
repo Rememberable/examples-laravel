@@ -504,7 +504,49 @@ class AllUserController extends Controller
 </table>
 ```
 
+### Finding Hard-Coded Credentials
 
+#### Hard-Coded Emails
+
+```php
+protected function gate()
+{
+    Gate::define('viewTelescope', function ($user) {
+        return in_array($user->email, [
+            'mail@example.com',
+            'joe.bloggs@example.com',
+        ]);
+    });
+}
+```
+
+Fix:
+```dotenv
+TELESCOPE_ALLOWED_EMAILS="mail@example.com,joe.bloggs@example.com"
+```
+```php
+// config/telescope.php file
+return [
+    // …
+    'allowed_emails' => env('TELESCOPE_ALLOWED_EMAILS', ''),
+    // …
+];
+```
+```php
+protected function gate()
+{
+    Gate::define('viewTelescope', function ($user) {
+        return in_array(
+            $user->email,
+            explode(',', config('telescope.allowed_emails')),
+        );
+    });
+}
+```
+
+#### Hard-Coded API Keys
+
+On some projects, this key was hard-coded as a const or property at the top of the code using it.
 
 
 # Custom
