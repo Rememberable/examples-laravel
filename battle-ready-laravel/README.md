@@ -544,6 +544,16 @@ protected function gate()
 }
 ```
 
+### Check Open Package Routes
+
+This will result in only the routes being displayed that have been registered by packages included in your project.
+
+```shell
+php artisan route:list --only-vendor
+```
+
+
+
 #### Hard-Coded API Keys
 
 On some projects, this key was hard-coded as a const or property at the top of the code using it.
