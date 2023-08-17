@@ -303,6 +303,97 @@ Route::get(
 ```
 
 
+### Checking Validation
+
+#### Applying the Basic Rules
+
+- Is the field required?
+- What data type is the field?
+- Is there a minimum value (or length) this field can be?
+- Is there a maximum field (or length) this field can be?
+
+So you can think of your validation rules as being written using the following format:
+```text
+REQUIRED|DATATYPE|MIN|MAX|OTHERS
+```
+
+#### Checking for Empty Validation
+
+This means that the twitter_handle field can now be passed in the request and stored. This can be a dangerous move 
+because it circumvents the purpose of validating the data before it is stored.
+
+```php
+$validated = $request->validate([
+    'name' => 'required|string|max:255',
+    'email' => 'required|email',
+    'twitter_handle' => '',
+]);
+```
+
+
+### Finding "Fake Facades"
+
+```php
+class PricingService
+{
+    private static bool $withTax = false;
+ 
+    public static function calculatePrice(Product $product)
+    {
+        return static::$withTax
+            ? $product->price * 1.2
+            : $product->price;
+    }
+ 
+    public static function withTax(bool $withTax = true): void
+    {
+        static::$withTax = $withTax;
+    }
+}
+```
+
+```php
+PricingService::withTax();
+$priceWithTax = PricingService::calculatePrice($productOne);
+
+$priceWithoutTax = PricingService::calculatePrice($productTwo);
+```
+
+Although it appears that the priceWithoutTax variable should have had the price calculated without the tax, it will 
+have been included because we called the withTax method beforehand.
+
+### Finding Business Logic in Helpers
+
+```php
+use App\DataTransferObjects\UserData;
+use App\Jobs\AlertNewUser;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+
+if (! function_exists('store_user')) {
+    function store_user(UserData $userData): User
+    {
+        return DB::transaction(function () use ($userData) {
+            $user = User::create([
+                'email' => $userData->email,
+            ]);
+                
+            $user->roles()->attach(
+                Role::where('name', 'general')->first()
+            );
+            
+            AlertNewUser::dispatch($user);
+            
+            return $user;
+        });
+    }
+}
+```
+
+One of the easiest ways of solving this issue is to move the functions into classes. This would provide us with the 
+ability to resolve the class from the service container so that we can mock it during our tests or replace it with a 
+test double.
 
 
 # Custom
