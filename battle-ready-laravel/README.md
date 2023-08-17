@@ -440,3 +440,14 @@ If you would like Pint to only modify the files that have uncommitted changes
 ```shell
 ./vendor/bin/pint --dirty
 ```
+
+## Debugbar for Laravel
+
+Package for Laravel Debugging
+
+[Documentation](http://phpdebugbar.com/)
+
+Installation
+```shell
+composer require barryvdh/laravel-debugbar --dev
+```
