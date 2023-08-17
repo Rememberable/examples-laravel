@@ -395,6 +395,117 @@ One of the easiest ways of solving this issue is to move the functions into clas
 ability to resolve the class from the service container so that we can mock it during our tests or replace it with a 
 test double.
 
+### Finding N+1 Queries
+
+#### What Are N+1 Queries?
+
+```php
+$comments = Comment::all();
+
+foreach ($comments as $comment) {
+    print_r($comment->author->name);
+}
+```
+
+Fix N+1 quires:
+```php
+$comments = Comment::with('author')->get();
+
+foreach ($comments as $comment) {
+    print_r($comment->author->name);
+}
+```
+
+#### How to Disable N+1 Queries
+
+```php
+namespace App\Providers;
+
+use Illuminate\Support\ServiceProvider;
+
+class AppServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        Model::preventLazyLoading();
+    }
+}
+```
+
+Do not crush production:
+```php
+Model::preventLazyLoading(! app()->isProduction());
+```
+
+### Finding Controllers That Use Other Controllers
+
+```php
+class UserController extends Controller
+{
+    public function index()
+    {
+        return User::where('is_admin', false)
+            ->get()
+            ->toArray();
+    }
+}
+```
+```php
+class AdminUserController extends Controller
+{
+    public function index()
+    {
+        return User::where('is_admin', true)
+            ->get()
+            ->toArray();
+    }
+}
+```
+
+```php
+class AllUserController extends Controller
+{
+    public function index()
+    {
+        $nonAdminUsers = (new UserController())->index();
+        $adminUsers = (new AdminUserController())->index();
+ 
+        return [
+            'users' => $nonAdminUsers,
+            'admin_users' => $adminUsers,
+        ];
+    }
+}
+```
+
+### Finding Logic and Queries in Blade Views
+
+```php
+@php
+    $users = User::where('is_admin', false)
+    ->select()
+    ->withCount(['posts' => function ($query) {
+        $query->where('published_at', '<=', now());
+    }])
+    ->get();
+@endphp
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Posts</th>
+    </tr>
+    @foreach($users as $user)
+        <tr>
+            <td>$user->name</td>
+            <td>$user->posts_count</td>
+        </tr>
+    @endforeach
+</table>
+```
+
+
+
 
 # Custom
 
