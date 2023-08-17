@@ -544,6 +544,10 @@ protected function gate()
 }
 ```
 
+#### Hard-Coded API Keys
+
+On some projects, this key was hard-coded as a const or property at the top of the code using it.
+
 ### Check Open Package Routes
 
 This will result in only the routes being displayed that have been registered by packages included in your project.
@@ -552,11 +556,35 @@ This will result in only the routes being displayed that have been registered by
 php artisan route:list --only-vendor
 ```
 
+### Reviewing Project Documentation
 
+Up-to-date documentation can make it much easier for new developers to be onboarded onto a project.
 
-#### Hard-Coded API Keys
+#### Local development instructions
 
-On some projects, this key was hard-coded as a const or property at the top of the code using it.
+What environment are they expected to use? Docker? Valet? Homestead?
+
+These instructions are also useful for telling them about any API keys that they might need to configure, or any 
+commands that they need to run
+
+#### Information about the production environment
+
+What sort of infrastructure is being used to host the project? Is it running on an AWS EC2? Is it a serverless-based 
+application that's using Laravel Vapor? Is Laravel Octane being used? What type of database are you using? In some 
+cases the specifics of this don't matter much(and could compromise security if seen by the wrong people)
+
+#### Code style
+
+What code style should the developers use? You might be using a common standard, such as PSR-12, or you might have your 
+own company style guide
+
+#### Code standards
+
+You may also want to specify any standards that you expect the developers to follow.
+
+#### Frequently asked questions
+
+As your project and team grow, you might find questions commonly asked about the project by new developers.
 
 
 # Custom
