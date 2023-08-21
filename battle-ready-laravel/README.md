@@ -205,7 +205,9 @@ When writing your tests, it's important that you define a structure before start
 
 ### Choosing What To Test
 
-## Test Structure
+### Test Structure
+
+"Arrange-Act-Assert" pattern
 
 
 # Custom

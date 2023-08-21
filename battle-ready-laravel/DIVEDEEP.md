@@ -697,7 +697,111 @@ public function error_is_thrown_if_user_cannot_be_created()
 }
 ```
 
-## Test Structure
+### Test Structure
+
+"Arrange-Act-Assert" pattern
+
+**Arrange** - Make all the preparations for your test to start. This might mean using a
+model factory to add data to your database. It might include you creating any mocks,
+test doubles, or dummy files.
+
+**Act** - Act on the target behaviour. This might mean making an HTTP call to a
+controller or calling a method in a class.
+
+**Assert** - Assert against the results of the target and the expected outcomes. For
+example, assert that the correct data was returned from the tested method or that a
+new row was created or updated in the database.
+
+```php
+use App\Models\Post;
+
+class BlogController extends Controller
+{
+    public function index()
+    {
+        $posts = Post::query()
+            ->where('published_at', '<=', now())
+            ->orderByDesc('published_at')
+            ->get();
+ 
+        return view('blog.index', $posts);
+    }
+}
+```
+
+To "arrange" the test we'd first need to:
+- Create some published blog posts in our database.
+- Create some unpublished blog posts in our database.
+
+
+We'd then want to "act" on the test by:
+- Making an HTTP call to the controller method (which we'll assume can be reached using a route with the name blog.index).
+
+
+We can then "assert" in our test by asserting that:
+- The correct view is returned.
+- The published blog posts are returned in order of their published_at date.
+- The unpublished blog posts are not returned.
+
+As a result, our test may look something like so:
+
+```php
+namespace Tests\Feature\Controllers\BlogController;
+
+use App\Post;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\Sequence;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Tests\TestCase;
+
+class IndexTest extends TestCase
+{
+    use LazilyRefreshDatabase;
+ 
+    /** @test */
+    public function view_is_returned(): void
+    {
+        // ARRANGE...
+        // Create a post that has not been published yet.
+        // This should not be included in the response.
+        Post::factory()
+            ->create(['published_at' => now()->addDay()]);
+
+        // Create 3 posts that have been published.
+        // These should be included in the response.
+        $posts = Post::factory()
+            ->count(3)
+            ->state(new Sequence(
+                ['published_at' => now()->subYear()],
+                ['published_at' => now()->subMinute()],
+                ['published_at' => now()->subSecond()],
+            ))
+            ->create();
+ 
+        // ACT...
+        $response = $this->get(route('blog.index'));
+ 
+        // ASSERT...
+        $response->assertOk()
+            ->assertViewIs('blog.index')
+            ->assertViewHas(
+                'posts',
+                function (Collection $viewPosts) use ($posts) {
+                    // Assert that only the published posts were
+                    // returned and that they were in the
+                    // correct order.
+                    $expectedPosts = [
+                        $posts[2]->id,
+                        $posts[1]->id,
+                        $posts[0]->id,
+                    ];
+ 
+                    return $viewPosts->pluck('id')->toArray() === $expectedPosts;
+                }
+            );
+    }
+}
+```
 
 
 # Custom
