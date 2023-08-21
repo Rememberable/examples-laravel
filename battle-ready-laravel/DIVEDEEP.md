@@ -586,12 +586,125 @@ You may also want to specify any standards that you expect the developers to fol
 As your project and team grow, you might find questions commonly asked about the project by new developers.
 
 
+# Testing
+
+## Planning Your Testing Strategy
+
+This will make it easier to build your new test suite, and will also make it easier to cooperate with your peers if
+working as part of a team.
+
+## The Benefits of Writing Tests
+
+Writing tests before the code is released into production is almost always the best option!
+
+### Spotting Bugs Early
+
+How many times have you written code, ran it once or twice, and then committed it?
+
+### Making Future Work and Refactoring Easier
+
+Without tests, how will you know that changing or adding code isn't going to break the existing functionality?
+
+### Changing the Way You Approach Writing Code
+
+To write code in a way that can be tested, you have to look at the structure of your classes and methods from a 
+slightly different angle than before.
+
+### Tests-As-Documentation
+
+Your tests can act as a form of documentation and give hints that can help a developer understand what a method does.
+
+### Prove That Bugs Exist
+
+In the event that a bug is reported by a user, you can write tests to mimic the actions of the user.
+
+## Structuring Your Tests
+
+When writing your tests, it's important that you define a structure before starting.
+
+### Directory Structure
+
+There are different directory structures you can use for writing tests, and every project that I've worked on has 
+always been different
+
+`app/Http/Controllers/UserController@index` -> `tests/Feature/Http/Controllers/UserController/IndexTest.php`
+
+`app/Http/Controllers/UserController@store` -> `tests/Feature/Http/Controllers/UserController/StoreTest.php`
+
+`app/Http/Controllers/UserController@update` -> `tests/Feature/Http/Controllers/UserController/UpdateTest.php`
+
+Of course, you don't need to follow this same structure, and you can choose whatever works best for you and your team. 
+But I do think it's important that you and your team decide on a suitable structure that is consistent.
+
+### Choosing What To Test
+
+If you're new to writing tests, you may find that one of the most difficult parts of the process is figuring out what 
+to actually test.
+
+When I'm writing a test, I try to break the method's code down and identify specific pieces that I can assert against.
+For example, we might want to assert against:
+
+- The returned output of a method based on the input.
+- Whether a user was authenticated or logged out.
+- Whether any exceptions were thrown.
+- Whether any rows in the database changed.
+- Whether any jobs were added to the queue.
+- Whether any events were dispatched.
+- Whether any mail or notifications were sent (or queued).
+- Whether any external HTTP calls were made
+
+```php
+use App\DataTransferObjects\UserData;
+use App\Models\User;
+use App\Services\MyThirdPartyService;
+
+public function store(UserData $userData): User
+{
+    return DB::transaction(function () use ($user, $userData) {
+        $user = User::create([
+            'email' => $userData->email,
+        ]);
+
+        $this->assignRole('admin');
+ 
+        $service = app(MyThirdPartyService::class);
+ 
+        if (! $service->createUser($user)) {
+            throw new \Exception('User could not be created');
+        }
+ 
+        return $user;
+    });
+}
+```
+
+```php
+/** @test */
+public function user_can_be_created()
+{
+    // 1. Assert that the user is created in the database.
+    // 2. Assert that the user is assigned the 'admin' role.
+    // 3. Assert that the user is created in the third-party
+    // system.
+    // 4. Assert that the method returns the created model.
+}
+
+/** @test */
+public function error_is_thrown_if_user_cannot_be_created()
+{
+    // 1. Assert that an exception is thrown if the user
+    // cannot be created in the third-party system.
+}
+```
+
+## Test Structure
+
+
 # Custom
 
 ## Sail
 
-Laravel Sail is a light-weight command-line interface for interacting with Laravel's default Docker development 
-environment.
+Laravel Sail is a light-weight command-line interface for interacting with Laravel's default Docker development environment.
 
 [Documentation](https://laravel.com/docs/sail)
 

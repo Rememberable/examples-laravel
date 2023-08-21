@@ -165,6 +165,53 @@ php artisan route:list --only-vendor
 #### Frequently asked questions
 
 
+# Testing
+
+## Planning Your Testing Strategy
+
+This will make it easier to build your new test suite, and will also make it easier to cooperate with your peers if
+working as part of a team.
+
+## The Benefits of Writing Tests
+
+Writing tests before the code is released into production is almost always the best option!
+
+### Spotting Bugs Early
+
+How many times have you written code, ran it once or twice, and then committed it?
+
+### Making Future Work and Refactoring Easier
+
+Without tests, how will you know that changing or adding code isn't going to break the existing functionality?
+
+### Changing the Way You Approach Writing Code
+
+To write code in a way that can be tested, you have to look at the structure of your classes and methods from a
+slightly different angle than before.
+
+### Tests-As-Documentation
+
+Your tests can act as a form of documentation and give hints that can help a developer understand what a method does.
+
+### Prove That Bugs Exist
+
+In the event that a bug is reported by a user, you can write tests to mimic the actions of the user.
+
+## Structuring Your Tests
+
+When writing your tests, it's important that you define a structure before starting.
+
+### Directory Structure
+
+### Choosing What To Test
+
+## Test Structure
+
+
+# Custom
+
+
+
 # Custom
 
 ## Sail
