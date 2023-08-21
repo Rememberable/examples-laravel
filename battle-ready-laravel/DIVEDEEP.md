@@ -803,6 +803,69 @@ class IndexTest extends TestCase
 }
 ```
 
+### Data Providers
+
+You may find when writing tests that you want to test the same method but with many different inputs or scenarios. 
+This can lead to many tests that are mostly identical; the maintenance of these tests can be cumbersome and tedious.
+
+```php
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
+
+class CalculateReadTimeTest extends TestCase
+{
+    use WithFaker;
+ 
+    /**
+    * @test
+    * @dataProvider readTimeDataProvider
+    */
+    public function correct_read_time_is_returned(int $wordCount, int $expectedResult): void
+    {
+        $words = $this->faker->words($wordCount, true);
+ 
+        self::assertEquals($expectedResult, calculate_read_time($words));
+    }
+ 
+    public function readTimeDataProvider(): array
+    {
+        return [
+            [3, 1],
+            [265, 60],
+            [530, 120],
+            [500, 114],
+            [2000, 453],
+        ];
+    }
+}
+```
+
+```php
+use Illuminate\Foundation\Testing\WithFaker;
+use Tests\TestCase;
+
+class CalculateReadTimeTest extends TestCase
+{
+    use WithFaker;
+ 
+    /**
+    * @test
+    * @testWith [3, 1]
+    *           [265, 60]
+    *           [530, 120]
+    *           [500, 114]
+    *           [2000, 453]
+    */
+    public function correct_read_time_is_returned(int $wordCount, int $expectedResult): void
+    {
+        $words = $this->faker->words($wordCount, true);
+
+        self::assertEquals($expectedResult ,calculate_read_time($words));
+    }
+}
+```
+
+
 
 # Custom
 
