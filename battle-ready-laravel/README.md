@@ -231,6 +231,8 @@ When writing your tests, it's important that you define a structure before start
 
 ### Larastan
 
+### Laravel Dusk
+
 # Custom
 
 ## Sail
