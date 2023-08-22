@@ -921,6 +921,50 @@ public function user_can_login_with_2fa()
 php artisan dusk --group=authentication
 ```
 
+## Creating a CI Workflow Using GitHub Actions
+
+Once you have a test suite set up and working, you'll want to set up a CI (continuous integration) workflow that can be 
+used to run checks against all our future code.
+
+### Using an .env.ci File
+
+You can place all of your environment variables here, and when we start our GitHub Action, we'll copy our `.env.ci` file 
+so it becomes our `.env` file while the tests are running.
+
+### Running the Test Suite
+
+In `.github/workflows/test.yml` file
+
+For Mysql:
+
+```yaml
+services:
+  mysql:
+    image: mysql:8.0
+    env:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: testing
+    ports:
+      - 33306:3306
+    options: --health-cmd="mysqladmin ping" --healthinterval=10s --health-timeout=5s --health-retries=3
+```
+
+For PostgreSQL:
+
+```yaml
+services:
+  postgres:
+    image: postgres:14.5
+    env:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: testing
+    ports:
+      - 33306:3306
+  options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+```
+
+
 # Custom
 
 ## Sail

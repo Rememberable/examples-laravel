@@ -223,6 +223,12 @@ When writing your tests, it's important that you define a structure before start
 
 ## Testing Your UI with Laravel Dusk
 
+## Creating a CI Workflow Using GitHub Actions
+
+### Using an .env.ci File
+
+### Running the Test Suite
+
 # Custom
 
 ## Sail
