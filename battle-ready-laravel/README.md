@@ -276,3 +276,15 @@ composer require barryvdh/laravel-debugbar --dev
 ```shell
 composer require livewire/livewire
 ```
+
+## Dusk
+
+[Documentation](https://laravel.com/docs//dusk)
+
+```shell
+composer require --dev laravel/dusk
+```
+
+```shell
+php artisan dusk:install
+```

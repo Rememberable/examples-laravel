@@ -1,34 +1,46 @@
-name: Test Suite
+name: PHP Unit
 
 on: [pull_request, push]
 
 jobs:
   phpunit:
-    runs-on: ubuntu-22.04
-    container:
-      image: kirschbaumdevelopment/laravel-test-runner:8.2
+    runs-on: ubuntu-latest
+
+    env:
+      APP_URL: "http://127.0.0.1:8000"
+      DB_CONNECTION: mysql
+      DB_DATABASE: db_test_laravel
+      DB_PORT: 3306
+      DB_USER: root
+      MAIL_MAILER: log
 
     services:
       mysql:
-        image: mysql:8.0
+        image: mysql:latest
         env:
-          MYSQL_DATABASE: laravel
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
+          MYSQL_DATABASE: db_test_laravel
         ports:
           - 3306:3306
-        options: --health-cmd="mysqladmin ping" --healthinterval=10s --health-timeout=5s --health-retries=3
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Install PHP versions
+        uses: shivammathur/setup-php@v2
         with:
-          fetch-depth: 1
+          php-version: 8.2
 
-      - name: Install composer dependencies
-        run: |
-          composer install --no-scripts
+      - name: Copy .env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
-      - name: Copy env
-        run: cp .env.example .env
+      - name: Install Dependencies
+        run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
 
       - name: Generate key
         run: php artisan key:generate
@@ -39,5 +51,5 @@ jobs:
       - name: Run Migrations
         run: php artisan migrate
 
-      - name: Execute tests
+      - name: Execute tests (Unit and Feature tests) via PHPUnit
         run: php artisan test

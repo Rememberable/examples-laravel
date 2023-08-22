@@ -969,6 +969,11 @@ services:
 In `.github/workflows/larastan.yml` file
 
 
+### Laravel Dusk
+
+In `.github/workflows/dusk.yml` file
+
+
 # Custom
 
 ## Sail
