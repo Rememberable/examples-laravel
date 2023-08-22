@@ -15,6 +15,7 @@
         "barryvdh/laravel-debugbar": "^3.8",
         "enlightn/enlightn": "^2.5",
         "fakerphp/faker": "^1.9.1",
+        "laravel/dusk": "^7.9",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.23",
         "mockery/mockery": "^1.4.4",
