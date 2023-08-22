@@ -229,6 +229,8 @@ When writing your tests, it's important that you define a structure before start
 
 ### Running the Test Suite
 
+### Larastan
+
 # Custom
 
 ## Sail

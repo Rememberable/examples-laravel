@@ -964,6 +964,10 @@ services:
   options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 ```
 
+### Larastan
+
+In `.github/workflows/larastan.yml` file
+
 
 # Custom
 

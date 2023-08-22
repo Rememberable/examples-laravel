@@ -1,0 +1,19 @@
+name: Static Analysis
+
+on: [pull_request, push]
+
+jobs:
+  larastan:
+    runs-on: ubuntu-22.04
+    container:
+      image: kirschbaumdevelopment/laravel-test-runner:8.2
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install composer dependencies
+        run: composer install --no-scripts
+
+      - name: Run Larastan
+        run: vendor/bin/phpstan analyse
