@@ -865,7 +865,26 @@ class CalculateReadTimeTest extends TestCase
 }
 ```
 
+## Writing the Tests
 
+### Prioritising Mission-Critical Tests First
+
+To start testing your project, you'll first want to identify the mission-critical parts of your code. For example, on 
+an e-commerce site, you might identify the "basket" and "checkout" features as mission-critical parts of your code.
+
+### Writing the Rest of the Tests
+
+After you've started building up a test suite that covers the mission-critical parts of your project, you can write 
+tests for other parts of the system.
+
+### Benefits of Writing the Easy Tests First
+
+A key benefit of writing the easiest tests first is that you can write them faster than tests for more difficult 
+methods. As a result, you can write more tests in a shorter space of time and grow your test suite faster.
+
+### Preventing Test Fatigue
+
+As you write more tests, you'll feel more comfortable writing them and find you can write them more quickly.
 
 # Custom
 

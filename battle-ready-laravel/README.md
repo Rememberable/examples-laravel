@@ -211,10 +211,15 @@ When writing your tests, it's important that you define a structure before start
 
 ### Data Providers
 
+## Writing the Tests
 
-# Custom
+### Prioritising Mission-Critical Tests First
 
+### Writing the Rest of the Tests
 
+### Benefits of Writing the Easy Tests First
+
+### Preventing Test Fatigue
 
 # Custom
 
@@ -224,6 +229,10 @@ When writing your tests, it's important that you define a structure before start
 
 ```shell
 composer require laravel/sail --dev
+```
+
+```shell
+php artisan sail:install
 ```
 
 ```shell
@@ -248,4 +257,12 @@ composer require laravel/pint --dev
 
 ```shell
 composer require barryvdh/laravel-debugbar --dev
+```
+
+## Livewire
+
+[Documentation](https://laravel-livewire.com/)
+
+```shell
+composer require livewire/livewire
 ```
