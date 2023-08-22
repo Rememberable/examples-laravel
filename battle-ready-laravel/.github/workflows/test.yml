@@ -1,4 +1,4 @@
-name: PHP Unit
+name: PhpUnit
 
 on: [pull_request, push]
 
@@ -36,11 +36,11 @@ jobs:
         with:
           php-version: 8.2
 
-      - name: Copy .env
-        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      - name: Prepare The Environment
+        run: cp .env.example .env
 
-      - name: Install Dependencies
-        run: composer install --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - name: Install Composer Dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
 
       - name: Generate key
         run: php artisan key:generate

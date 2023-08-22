@@ -9,8 +9,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install composer dependencies
-        run: composer install --no-scripts
+      - name: Install PHP versions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+
+      - name: Install Composer Dependencies
+        run: composer install --no-progress --prefer-dist --optimize-autoloader
 
       - name: Run Larastan
         run: vendor/bin/phpstan analyse
