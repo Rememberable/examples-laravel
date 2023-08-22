@@ -886,6 +886,41 @@ methods. As a result, you can write more tests in a shorter space of time and gr
 
 As you write more tests, you'll feel more comfortable writing them and find you can write them more quickly.
 
+## Testing Your UI with Laravel Dusk
+
+UI tests can simulate user actions on your site or application.
+
+### Installation
+
+```shell
+composer require --dev laravel/dusk
+```
+
+```shell
+php artisan dusk:install
+```
+
+### Running Failed Tests and Groups
+
+```shell
+php artisan dusk:fails
+```
+
+```php
+/**
+* @group authentication
+* @test
+*/
+public function user_can_login_with_2fa()
+{
+    // ...
+}
+```
+
+```shell
+php artisan dusk --group=authentication
+```
+
 # Custom
 
 ## Sail
