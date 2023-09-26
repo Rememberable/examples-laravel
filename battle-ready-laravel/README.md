@@ -233,6 +233,28 @@ When writing your tests, it's important that you define a structure before start
 
 ### Laravel Dusk
 
+# Fixed
+
+## Planning Your Fixing Strategy
+
+## Using an Error Reporting System
+
+### Types of Errors
+
+- Runtime errors
+- Syntax errors
+- Logic errors
+
+### The Benefits of an Automated Error Reporting System
+
+### Error Reporting Using Flare
+
+## Uptime Checking, Queue Monitoring, and Scheduler Monitoring
+
+#### Uptime Monitoring with Oh Dear
+
+## Updating PHP, Laravel, and Packages
+
 # Custom
 
 ## Sail

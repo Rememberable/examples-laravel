@@ -973,6 +973,38 @@ In `.github/workflows/larastan.yml` file
 
 In `.github/workflows/dusk.yml` file
 
+# Fixed
+
+## Planning Your Fixing Strategy
+
+When deciding how to start fixing your project, it's important that you have a clearly defined strategy. This will 
+help you understand how much work is possible in the available time and what must be fixed first.
+
+## Using an Error Reporting System
+
+### Types of Errors
+
+- Runtime errors
+- Syntax errors
+- Logic errors
+
+### The Benefits of an Automated Error Reporting System
+
+### Error Reporting Using Flare
+
+## Uptime Checking, Queue Monitoring, and Scheduler Monitoring
+
+#### Uptime Monitoring with Oh Dear
+
+## Updating PHP, Laravel, and Packages
+
+## Using a Suitable Local Development Environment
+
+## Using Tests to Fix Bugs
+
+# Improving
+
+
 
 # Custom
 
