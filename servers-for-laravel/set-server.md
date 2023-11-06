@@ -293,7 +293,7 @@ jobs:
           port: 22
           username: laracasts
           keys: ${{secrets.PRIVATE_KEY}}
-          script: "cd www; git pull origin main"
+          script: "cd www; git pull origin main; sudo service php8.2-fpm reload"
 ```
 
 ```shell
