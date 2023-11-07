@@ -287,12 +287,12 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Deploy
-        uses: appleboy/ssh-action@v0.1.8
+        uses: appleboy/ssh-action@v1.0.0
         with:
           host: 54.160.249.168
           port: 22
           username: laracasts
-          keys: ${{secrets.PRIVATE_KEY}}
+          key: ${{secrets.PRIVATE_KEY}}
           script: "cd www; git pull origin main; sudo service php8.2-fpm reload"
 ```
 
