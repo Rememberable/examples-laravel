@@ -56,7 +56,7 @@ Schema::create('comments', function (Blueprint $table) {
 
 ```php
 <?php
-Schema::create('posts', function (Blueprint $table) {
+Schema::create('favorites', function (Blueprint $table) {
     $table->id();
     $table->integer('user_id')->index();
     $table->integer('favoritable_id');
